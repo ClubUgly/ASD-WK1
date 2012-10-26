@@ -8,27 +8,26 @@
 // Wait until the DOM is ready.
 $('#myorder').on('pageinit', function () {
 	console.log("Home Page loaded.");
-//$(document).ready(function(){
-//window.addEventListener("DOMContentLoaded", function(){
-//	alert(localStorage.value(0));
 
-	//getElementById Function
-	function $(x){
-		var theElement = document.getElementById(x);
-		return theElement;
-	}
+	//Variable defaults
+	var flowerSelection = ["--Choose your flower type--", "Daisies", "Lilies", "Orchids", "Roses", "Timeless Tulips"],
+		sexValue,
+		termsValue = "No",
+		errMsg = $('errors');
+		
+		var id;
 	
 	//Create select field element and populate with options.
-	function makeCats(){
+	function makeCats() {
 		var formTag = document.getElementsByTagName("form"), //formTag is an array of all the form tags.
 			selectLi = $('select'),
 			makeSelect = $('<select></select>');
-			makeSelect.setAttribute("id", "groups");
-		for(var i=0, j=flowerSelection.length; i<j; i++){
+			makeSelect.attr("id", "groups");
+		for (var i=0, j=flowerSelection.length; i<j; i++){
 			var makeOption = $('<option></option>');
 			var optText = flowerSelection[i];
-			makeOption.setAttribute("value", optText);
-			makeOption.innerHTML = optText;
+			makeOption.attr("value", optText);
+			makeOption.html = optText;
 			makeSelect.append(makeOption);
 		}
 		//selectLi.appendChild(makeSelect);
@@ -109,7 +108,7 @@ $('#myorder').on('pageinit', function () {
 		}
 		//write data from local storage to the browser
 		var makeDiv = $('<div></div>');
-		makeDiv.setAttribute("id", "items");
+		makeDiv.attr("id", "items");
 		var makeList = $('<ul></ul>');
 		makeDiv.append(makeList);
 		document.body.append(makeDiv);
@@ -129,7 +128,7 @@ $('#myorder').on('pageinit', function () {
 				var makeSubli = $('<li></li>');
 				makeSubList.append(makeSubli);
 				var optSubText = obj[n][0]+" "+obj[n][1];
-				makeSubli.innerHTML = optSubText;
+				makeSubli.html = optSubText;
 				makeSubList.append(linksLi);
 			}
 			makeItemLinks(localStorage.key(i), linksLi); // Create our edit and delete buttons/links for each item in local storage.
@@ -154,7 +153,7 @@ $('#myorder').on('pageinit', function () {
 		editLink.key = key;
 		var editText = $("Edit Order");
 		editLink.on("click", editItem);
-		editLink.innerHTML = editText;
+		editLink.html = editText;
 		linksLi.append(editLink);
 		
 		//add a line break
@@ -167,7 +166,7 @@ $('#myorder').on('pageinit', function () {
 		deleteLink.key = key;
 		var deleteText = $("Delete Order");
 		deleteLink.on("click", deleteItem);
-		deleteLink.innerHTML = deleteText;
+		deleteLink.html = deleteText;
 		linksLi.append(deleteLink);
 	}
 	
@@ -176,7 +175,7 @@ $('#myorder').on('pageinit', function () {
 		var value = localStorage.getItem(this.key);
 		var item = JSON.parse(value);
 		
-		//show the forum
+		//show the form
 		toggleControls("off");
 		
 		//populate the form fields with current localStorage values.
@@ -186,9 +185,9 @@ $('#myorder').on('pageinit', function () {
 		var radios = document.forms[0].sex;
 		for(var i=0; i<radios.length; i++){
 			if(radios[i].val() == "Male" && item.sex[1] == "Male"){
-				radios[i].setAttribute("checked", "checked");
+				radios[i].attr("checked", "checked");
 			}else if(radios[i].val() == "Female" && item.sex[1] == "Female"){
-				radios[i].setAttribute("checked", "checked");
+				radios[i].attr("checked", "checked");
 			}
 		}
 		$('#borndate').val() = item.borndate[1];
@@ -196,7 +195,7 @@ $('#myorder').on('pageinit', function () {
 		$('#quantity').val() = item.quantity[1];
 		$('#comments').val() = item.comments[1];
 		if(item.terms[1] == "Yes"){
-			$('terms').setAttribute("checked", "checked");
+			$('terms').attr("checked", "checked");
 		}
 		
 		//remove the initial listener from the input save order button
@@ -215,7 +214,7 @@ $('#myorder').on('pageinit', function () {
 		if(ask){
 			localStorage.removeItem(this.key);
 			alert("Order was deleted!!!");
-			window.location.reload();
+			location.reload(true);
 		}else{
 			alert("Order was NOT deleted.");
 		}
@@ -227,80 +226,37 @@ $('#myorder').on('pageinit', function () {
 		}else{
 			localStorage.clear();
 			alert("Shopping order is deleted!");
-			window.location.reload();
+			location.reload(true);
 			return false;
 		}
 	}
 	
-	function validate(e){
-		//define elements we want to check
-		var getFname = $('#fname');
-		var getEmail = $('#email');
-		var getBorndate = $('#borndate');
-		var getGroup =$('#groups');
-		
-		//reset error messages
-		errMsg.innerHTML = "";
-		getFname.addClass = ("1px solid black");
-		getEmail.addClass = ("1px solid black");
-		getBorndate.addClass = ("1px solid black");
-		getGroup.addClass = ("1px solid black");
-		
-		//get error messages
-		var messageAry = [];
-
-		
-		//name validation
-		if(getFname.value === ""){
-			var fNameError = "Please enter your name.";
-			getFname.addClass = ("1px solid red");
-			messageAry.push(fNameError);		
-		}
-		
-		//email validation
-		var re = /^\w+([\.'-']?\w+)*@\w+([\.'-']?\w+)*(\.\w{2,3})+$/;
-		if(!(re.exec(getEmail.value))){
-			var emailError = "Please enter a valid email address.";
-			getEmail.addClass = ("1px solid red");
-			messageAry.push(emailError);
-		}
-		
-		//DOB validation
-		if(getBorndate.value === ""){
-			var borndateError = "Please enter your birthday.";
-			getBorndate.addClass = ("1px solid red");
-			messageAry.push(borndateError);		
-		}		
-		
-		//group vailidation
-		if(getGroup.value=="--Choose your flower type--"){
-			var groupError = "Please choose a flower.";
-			getGroup.addClass = ("1px solid red");
-			messageAry.push(groupError);
-		}
-				
-		//if there were errors, display them on the screen.
-		if(messageAry.length >= 1){
-			for(var i=0, j=messageAry.length; i < j; i++){
-				var txt = $('<li></li>');
-				txt.innerHTML = messageAry[i];
-				errMsg.append(txt);	
-			}
-			e.preventDefault();
-			return false;
-		}else{
-			// if all is ok, save our data! send key value which came from the edit data function
-			// remember this key value was passed through
-			storeData(this.key);			
-		}
-	}
 	
-	//Variable defaults
-	var flowerSelection = ["--Choose your flower type--", "Daisies", "Lilies", "Orchids", "Roses", "Timeless Tulips"],
-		sexValue,
-		termsValue = "No",
-		errMsg = $('errors');	
+function validate(){
+	var myForm = $('#myorder'),
+		myerrorslink = $('#myerrorslink')	
 	;
+	
+	myForm.validate({
+		invalidHandler: function(form, validator){
+			myerrorslink.click();
+			var html = '';
+			for(var key in validator.submitted){
+				var label = $('label[for^="'+ key +'"]').not('[generated]');
+				var legend = label.closest('fieldset').find('.ui-controlgroup-label');
+				var fieldName = legend.length ? legend.text() : label.text();
+				html += '<li>' + fieldName +'</li>';
+			};
+			$('#ordererrors ul').html(html);
+		},
+		submitHandler: function(){
+			var data = myForm.serializeArray();
+			//parseMyOrder(data);
+			storeData(data);
+		}
+	});
+}
+
 	makeCats();
 	
 	//Set Link & Submit Click Events
@@ -321,26 +277,5 @@ var parseMyOrder = function(data){
 
 $(document).ready(function(){
 
-	var myform = $('#myorder'),
-		myerrorslink = $('#myerrorslink')
-	;
-	
-	myform.validate({
-		invalidHandler: function(form, validator){
-			myerrorslink.click();
-			var html = '';
-			for(var key in validator.submitted){
-				var label = $('label[for^="'+ key +'"]').not('[generated]');
-				var legend = label.closest('fieldset').find('.ui-controlgroup-label');
-				var fieldName = legend.length ? legend.text() : label.text();
-				html += '<li>' + fieldName +'</li>';
-			};
-			$("#ordererrors ul").html(html);
-		},
-		submitHandler: function(){
-			var data = myform.serializeArray();
-			parseMyOrder(data);
-		}
-	});
 
 });
